@@ -1,0 +1,42 @@
+# 启动端口
+server:
+  port: 8767
+
+# 应用名称
+spring:
+  application:
+    name: hystrix-turbine
+  security:
+    user:
+      #用户名
+      name: 'hxz'
+      # 密码
+      password: 'hxz'
+
+# 服务地址格式:http://ip地址:端口号/eureka/
+# 多个eureka服务地址用,号隔开
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      #暴露端点
+      exposure:
+        include: "*"
+      #允许跨域
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
+
+#turbine.appConfig 可配置多个，以逗号隔开
+turbine:
+  app-config: ribbon-client
+  aggregator:
+    clusterConfig: default
+  clusterNameExpression: new String("default")
+  combine-host: true
+  instanceUrlSuffix:
+    default: actuator/hystrix.stream

@@ -1,0 +1,60 @@
+# 启动端口
+server:
+  port: 8766
+
+# 应用名称
+spring:
+  application:
+    name: zuul-client
+
+user:
+  #用户名
+  name: 'hxz'
+  # 密码
+  password: 'hxz'
+
+# 服务地址格式:http://ip地址:端口号/eureka/
+# 多个eureka服务地址用,号隔开
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${user.name}:${user.password}@localhost:8761/eureka/
+
+# 默认的路由转发规则为：/服务id/**
+# 例如,http://localhost:8766/feign-client/hi 将转发到feign-client组件调用 /hi 接口
+
+# 忽略部分服务，不创建默认路由转发:zuul.ignored-services
+
+# 忽略部分接口：zuul.ignored-patterns
+# 此处忽略以-service 结尾的接口请求
+# zuul.ignored-patterns=/*-service/**
+
+
+#自定义路由转发
+zuul:
+  routes:
+    api-a:
+      path: /api-a/**
+      serviceId: feign-client
+    api-b:
+      path: /api-b/**
+      serviceId: ribbon-client
+    # 敏感头信息过滤列表
+    sensitiveHeaders: Cookie,Set-Cookie,Authorization
+  # 在转发前为请求设置host头信息（解决重定向问题）
+  add-host-header: true
+  # 如果想给每个服务的API接口加上一个前缀，可使用zuul.prefix进行配置
+  # 例如http://localhost:8766/v1/api-a/hi，即在所有的API接口上加一个v1作为版本号
+  prefix: /v1
+
+
+
+#暴露端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
